@@ -1,0 +1,21 @@
+[project]
+name = "caterpillar-hackathon"
+version = "0.1.0"
+description = "CAT Smart Operator Assistant — backend, ML models, and data pipeline"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pandas",
+    "numpy",
+    "pydantic",
+    "scikit-learn",
+    "joblib",
+    "setuptools",
+    "packaging",
+    "jmespath",
+    "httpx2", # required by starlette.testclient / fastapi TestClient, used in tests/test_api.py
+]
+
+[tool.uv]
+package = false

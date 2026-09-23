@@ -1,0 +1,11 @@
+machine_id,machine_type,model,year,fuel_type,total_engine_hours_lifetime,last_service_days_ago,health_score
+MC-001,Wheel Loader,CAT-950,2023,Diesel,3118.0,144,60.2
+MC-002,Bulldozer,CAT-336,2022,Hybrid,5138.0,6,70.8
+MC-003,Backhoe,CAT-D6,2021,Diesel,5383.0,200,44.1
+MC-004,Excavator,CAT-420,2016,Diesel,11223.0,93,35.0
+MC-005,Wheel Loader,CAT-320,2015,Hybrid,14731.0,101,35.0
+MC-006,Bulldozer,CAT-420,2019,Diesel,9831.0,97,46.4
+MC-007,Backhoe,CAT-320,2016,Diesel,9166.0,79,37.7
+MC-008,Excavator,CAT-336,2016,Diesel,11262.0,98,35.0
+MC-009,Wheel Loader,CAT-320,2020,Hybrid,6061.0,179,36.1
+MC-010,Bulldozer,CAT-950,2017,Diesel,10882.0,123,35.0

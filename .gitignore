@@ -1,1 +1,8 @@
 venv/
+.venv/
+__pycache__/
+*.pyc
+ml/models/
+node_modules/
+frontend/dist/
+.DS_Store

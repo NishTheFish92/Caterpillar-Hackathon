@@ -1,0 +1,3 @@
+incident_id,timestamp,operator_id,machine_id,task_id,incident_type,severity,description
+INC-00001,2026-09-23T11:44:01.412987,OP-003,MC-002,,Near-Miss,Medium,Pedestrian near swing radius
+INC-00002,2026-09-23T11:52:27.170341,OP-003,MC-002,,Near-Miss,Medium,Pedestrian near swing radius

@@ -1,0 +1,79 @@
+task_type,environmental_condition,terrain_type,sample_size,mean_duration_min,median_duration_min,std_duration_min
+Demolition,Clear,Hard Soil,27,85.0,76.0,36.0
+Demolition,Clear,Muddy,28,93.4,96.0,42.5
+Demolition,Clear,Rocky,23,94.6,98.0,20.7
+Demolition,Clear,Soft Soil,24,104.0,101.0,28.1
+Demolition,Dust Storm,Hard Soil,4,76.2,87.0,41.8
+Demolition,Dust Storm,Muddy,4,78.5,66.5,29.2
+Demolition,Dust Storm,Rocky,5,82.2,87.0,19.4
+Demolition,Dust Storm,Soft Soil,4,114.8,118.5,29.4
+Demolition,High Wind,Hard Soil,2,110.5,110.5,7.8
+Demolition,High Wind,Muddy,5,101.4,114.0,51.3
+Demolition,High Wind,Rocky,1,93.0,93.0,0.0
+Demolition,High Wind,Soft Soil,4,100.0,101.0,14.0
+Demolition,Rain,Hard Soil,8,113.9,108.5,27.5
+Demolition,Rain,Muddy,4,93.5,96.5,54.3
+Demolition,Rain,Rocky,6,113.2,115.0,33.3
+Demolition,Rain,Soft Soil,4,107.8,101.5,48.5
+Excavation,Clear,Hard Soil,26,81.6,74.0,39.7
+Excavation,Clear,Muddy,31,96.9,94.0,36.6
+Excavation,Clear,Rocky,29,96.3,96.0,34.9
+Excavation,Clear,Soft Soil,17,91.6,93.0,32.6
+Excavation,Dust Storm,Hard Soil,4,95.5,100.0,14.6
+Excavation,Dust Storm,Muddy,1,96.0,96.0,0.0
+Excavation,Dust Storm,Rocky,2,135.5,135.5,54.4
+Excavation,Dust Storm,Soft Soil,1,90.0,90.0,0.0
+Excavation,High Wind,Hard Soil,5,100.2,123.0,40.3
+Excavation,High Wind,Muddy,4,126.2,134.0,50.5
+Excavation,High Wind,Rocky,4,108.0,107.0,32.6
+Excavation,High Wind,Soft Soil,4,104.2,94.5,37.9
+Excavation,Rain,Hard Soil,8,85.8,87.0,27.3
+Excavation,Rain,Muddy,11,74.2,67.0,27.1
+Excavation,Rain,Rocky,9,92.7,95.0,24.0
+Excavation,Rain,Soft Soil,8,69.1,61.5,31.5
+Grading,Clear,Hard Soil,22,96.1,92.0,41.1
+Grading,Clear,Muddy,25,103.5,105.0,32.0
+Grading,Clear,Rocky,30,108.8,108.0,45.9
+Grading,Clear,Soft Soil,20,88.4,86.5,27.8
+Grading,Dust Storm,Hard Soil,5,93.6,61.0,55.2
+Grading,Dust Storm,Muddy,3,97.0,109.0,39.4
+Grading,Dust Storm,Rocky,10,76.7,67.0,37.5
+Grading,Dust Storm,Soft Soil,3,76.0,60.0,42.3
+Grading,High Wind,Hard Soil,6,107.5,98.0,34.0
+Grading,High Wind,Muddy,3,105.0,94.0,44.5
+Grading,High Wind,Soft Soil,5,56.4,59.0,15.5
+Grading,Rain,Hard Soil,5,70.2,50.0,32.6
+Grading,Rain,Muddy,5,91.0,82.0,22.8
+Grading,Rain,Rocky,11,96.7,91.0,28.0
+Grading,Rain,Soft Soil,6,83.3,85.0,13.8
+Material Loading,Clear,Hard Soil,20,86.2,75.5,37.4
+Material Loading,Clear,Muddy,22,88.0,96.0,32.2
+Material Loading,Clear,Rocky,19,91.1,92.0,27.5
+Material Loading,Clear,Soft Soil,25,90.7,96.0,42.3
+Material Loading,Dust Storm,Hard Soil,4,93.0,85.0,43.5
+Material Loading,Dust Storm,Muddy,2,74.5,74.5,60.1
+Material Loading,Dust Storm,Rocky,2,102.0,102.0,1.4
+Material Loading,Dust Storm,Soft Soil,3,86.0,104.0,40.1
+Material Loading,High Wind,Hard Soil,4,71.5,67.5,33.5
+Material Loading,High Wind,Muddy,5,89.8,59.0,54.5
+Material Loading,High Wind,Rocky,4,80.8,84.5,37.1
+Material Loading,Rain,Hard Soil,13,77.5,78.0,19.6
+Material Loading,Rain,Muddy,8,94.1,91.5,26.7
+Material Loading,Rain,Rocky,9,94.4,88.0,24.6
+Material Loading,Rain,Soft Soil,10,93.8,79.0,35.9
+Trenching,Clear,Hard Soil,21,90.0,85.0,35.5
+Trenching,Clear,Muddy,27,96.7,88.0,37.8
+Trenching,Clear,Rocky,18,86.1,84.0,40.2
+Trenching,Clear,Soft Soil,26,98.8,94.0,33.0
+Trenching,Dust Storm,Hard Soil,4,71.2,76.0,25.0
+Trenching,Dust Storm,Muddy,3,116.7,108.0,44.6
+Trenching,Dust Storm,Rocky,6,85.0,76.0,35.3
+Trenching,Dust Storm,Soft Soil,6,95.7,82.0,35.4
+Trenching,High Wind,Hard Soil,5,71.6,69.0,35.6
+Trenching,High Wind,Muddy,3,133.0,132.0,40.5
+Trenching,High Wind,Rocky,5,69.4,58.0,44.1
+Trenching,High Wind,Soft Soil,4,126.2,124.5,54.7
+Trenching,Rain,Hard Soil,8,85.5,88.0,33.3
+Trenching,Rain,Muddy,9,103.3,107.0,35.3
+Trenching,Rain,Rocky,11,83.6,78.0,20.6
+Trenching,Rain,Soft Soil,7,95.6,93.0,19.4

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAT Smart Operator Assistant</title>
+<style>
+  :root {
+    --bg: #f5f5f5;
+    --panel: #ffffff;
+    --border: #d8d8d8;
+    --text: #1a1a1a;
+    --muted: #666;
+    --accent: #ffcc00;
+    --ok: #1a7f37;
+    --warn: #b98900;
+    --crit: #c0392b;
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); }
+  header {
+    background: #1a1a1a; color: #fff; padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  header h1 { font-size: 17px; margin: 0; }
+  header .conn { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  header input {
+    padding: 5px 8px; border-radius: 4px; border: 1px solid #444; width: 220px;
+    background: #2a2a2a; color: #fff;
+  }
+  header button { padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; background: var(--accent); font-weight: 600; }
+  #status { font-size: 12px; }
+  #status.ok { color: #7ee787; }
+  #status.err { color: #ff7b72; }
+
+  nav { display: flex; gap: 4px; padding: 10px 20px 0; flex-wrap: wrap; }
+  nav button {
+    padding: 8px 14px; border: 1px solid var(--border); background: var(--panel);
+    border-bottom: none; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 14px;
+  }
+  nav button.active { background: var(--accent); font-weight: 600; }
+
+  main { padding: 16px 20px 40px; max-width: 1000px; margin: 0 auto; }
+  section { display: none; background: var(--panel); border: 1px solid var(--border); border-radius: 0 6px 6px 6px; padding: 18px; }
+  section.active { display: block; }
+  h2 { margin-top: 0; font-size: 18px; }
+  h3 { font-size: 14px; color: var(--muted); margin: 18px 0 8px; text-transform: none; }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 14px; }
+  label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); gap: 4px; }
+  input, select, textarea {
+    padding: 7px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 14px; min-width: 160px;
+  }
+  button.action {
+    padding: 8px 16px; border-radius: 4px; border: none; background: #1a1a1a; color: #fff;
+    cursor: pointer; font-size: 14px; height: 34px;
+  }
+  button.action:hover { background: #333; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #fff; }
+  .badge.ok { background: var(--ok); }
+  .badge.Warning { background: var(--warn); }
+  .badge.Critical { background: var(--crit); }
+  .badge.Medium { background: var(--warn); }
+  .badge.High { background: var(--crit); }
+  .badge.Low { background: var(--ok); }
+
+  .anomaly { border-left: 4px solid var(--warn); padding: 8px 12px; margin-bottom: 8px; background: #fffaf0; border-radius: 0 4px 4px 0; }
+  .anomaly.Critical { border-color: var(--crit); background: #fdf0ee; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .metric { border: 1px solid var(--border); border-radius: 6px; padding: 10px; }
+  .metric .val { font-size: 20px; font-weight: 700; }
+  .metric .lbl { font-size: 12px; color: var(--muted); }
+
+  pre.raw { background: #f0f0f0; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto; }
+  .empty { color: var(--muted); font-style: italic; padding: 10px 0; }
+  .card { border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; }
+  .card .title { font-weight: 600; }
+  .card .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚜 CAT Smart Operator Assistant</h1>
+  <div class="conn">
+    <label style="color:#ccc;">API base
+      <input id="apiBase" value="http://127.0.0.1:8000" style="margin-top:2px;">
+    </label>
+    <button onclick="checkHealth()">Connect</button>
+    <span id="status">not connected</span>
+  </div>
+</header>
+
+<nav>
+  <button class="tab active" data-tab="dashboard">Dashboard</button>
+  <button class="tab" data-tab="safety">Safety</button>
+  <button class="tab" data-tab="training">Training</button>
+  <button class="tab" data-tab="behavior">Behavior</button>
+  <button class="tab" data-tab="estimation">Task Time</button>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="active">
+    <h2>Daily Task Dashboard</h2>
+    <div class="row">
+      <label>Operator ID
+        <input id="dash_operator" value="OP-001">
+      </label>
+      <label>Date (optional)
+        <input id="dash_date" type="date">
+      </label>
+      <button class="action" onclick="loadDashboard()">Get Tasks</button>
+    </div>
+    <div id="dash_result"></div>
+  </section>
+
+  <!-- SAFETY -->
+  <section id="safety">
+    <h2>Safety</h2>
+
+    <h3>Seatbelt &amp; proximity — by machine</h3>
+    <div class="row">
+      <label>Machine ID
+        <input id="safety_machine" value="MC-005">
+      </label>
+      <button class="action" onclick="loadSeatbelt()">Check Seatbelt</button>
+      <button class="action" onclick="loadProximity()">Check Proximity</button>
+    </div>
+    <div id="safety_single_result"></div>
+
+    <h3>Site-wide active proximity alerts</h3>
+    <button class="action" onclick="loadAllProximity()">Refresh Alerts</button>
+    <div id="safety_all_alerts"></div>
+
+    <h3>Log an incident</h3>
+    <div class="row">
+      <label>Operator ID<input id="inc_operator" value="OP-003"></label>
+      <label>Machine ID<input id="inc_machine" value="MC-002"></label>
+      <label>Type
+        <select id="inc_type">
+          <option>Near-Miss</option>
+          <option>Collision</option>
+          <option>Seatbelt Violation</option>
+          <option>Mechanical Fault</option>
+        </select>
+      </label>
+      <label>Severity
+        <select id="inc_severity">
+          <option>Low</option>
+          <option selected>Medium</option>
+          <option>High</option>
+          <option>Critical</option>
+        </select>
+      </label>
+      <label style="flex:1">Description
+        <input id="inc_desc" value="Pedestrian near swing radius">
+      </label>
+      <button class="action" onclick="logIncident()">Log Incident</button>
+    </div>
+
+    <h3>Incident log</h3>
+    <button class="action" onclick="loadIncidents()">Refresh Incidents</button>
+    <div id="incident_list"></div>
+  </section>
+
+  <!-- TRAINING -->
+  <section id="training">
+    <h2>Training Hub</h2>
+    <button class="action" onclick="loadModules()">Load Modules</button>
+    <div id="training_modules"></div>
+
+    <h3>Book instructor session</h3>
+    <div class="row">
+      <label>Operator ID<input id="book_operator" value="OP-001"></label>
+      <label>Module ID<input id="book_module" value="MOD-005"></label>
+      <label>Preferred date/time<input id="book_datetime" type="datetime-local"></label>
+      <button class="action" onclick="bookSession()">Book</button>
+    </div>
+    <div id="booking_result"></div>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section id="behavior">
+    <h2>Unusual Behavior / Anomaly Detection</h2>
+    <div class="row">
+      <label>Operator ID<input id="beh_operator" value="OP-002"></label>
+      <label>Days<input id="beh_days" type="number" value="21" style="width:80px;"></label>
+      <button class="action" onclick="loadBehavior()">Analyze</button>
+    </div>
+    <div id="behavior_result"></div>
+  </section>
+
+  <!-- ESTIMATION -->
+  <section id="estimation">
+    <h2>Task Time Estimation</h2>
+    <div class="row">
+      <label>Task Type
+        <select id="est_task_type">
+          <option>Excavation</option>
+          <option>Grading</option>
+          <option>Material Loading</option>
+          <option>Trenching</option>
+          <option>Demolition</option>
+        </select>
+      </label>
+      <label>Environmental Condition
+        <select id="est_env">
+          <option>Clear</option>
+          <option>Rain</option>
+          <option>Dust Storm</option>
+          <option>High Wind</option>
+        </select>
+      </label>
+      <label>Terrain
+        <select id="est_terrain">
+          <option>Soft Soil</option>
+          <option>Hard Soil</option>
+          <option>Rocky</option>
+          <option>Muddy</option>
+        </select>
+      </label>
+      <button class="action" onclick="estimateTime()">Estimate</button>
+    </div>
+    <div id="estimation_result"></div>
+  </section>
+
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+function apiBase() { return $('apiBase').value.replace(/\/$/, ''); }
+
+// --- tab switching ---
+document.querySelectorAll('nav .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav .tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    $(btn.dataset.tab).classList.add('active');
+  });
+});
+
+async function api(path, opts) {
+  const res = await fetch(apiBase() + path, opts);
+  if (!res.ok) {
+    let detail = res.statusText;
+    try { detail = (await res.json()).detail || detail; } catch (e) {}
+    throw new Error(`${res.status}: ${detail}`);
+  }
+  return res.json();
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString();
+}
+
+async function checkHealth() {
+  const el = $('status');
+  el.className = ''; el.textContent = 'connecting…';
+  try {
+    await api('/health');
+    el.textContent = '● connected';
+    el.className = 'ok';
+  } catch (e) {
+    el.textContent = '● ' + e.message;
+    el.className = 'err';
+  }
+}
+
+// ---------------- Dashboard ----------------
+async function loadDashboard() {
+  const op = $('dash_operator').value.trim();
+  const date = $('dash_date').value;
+  const el = $('dash_result');
+  el.innerHTML = 'Loading…';
+  try {
+    const qs = date ? `?for_date=${date}` : '';
+    const tasks = await api(`/dashboard/${op}/tasks${qs}`);
+    if (!tasks.length) { el.innerHTML = '<div class="empty">No tasks found.</div>'; return; }
+    el.innerHTML = `<table><thead><tr>
+      <th>Task</th><th>Date</th><th>Machine</th><th>Site</th><th>Type</th>
+      <th>Environment</th><th>Terrain</th><th>Start</th><th>End</th><th>Priority</th>
+      </tr></thead><tbody>` + tasks.map(t => `<tr>
+        <td>${t.task_id}</td><td>${t.date}</td><td>${t.machine_id}</td><td>${t.site_id}</td>
+        <td>${t.task_type}</td><td>${t.environmental_condition}</td><td>${t.terrain_type}</td>
+        <td>${fmtDate(t.scheduled_start)}</td><td>${fmtDate(t.scheduled_end)}</td><td>${t.priority}</td>
+      </tr>`).join('') + `</tbody></table>`;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+// ---------------- Safety ----------------
+async function loadSeatbelt() {
+  const m = $('safety_machine').value.trim();
+  const el = $('safety_single_result');
+  el.innerHTML = 'Loading…';
+  try {
+    const d = await api(`/safety/seatbelt/${m}`);
+    el.innerHTML = `<div class="metric-grid">
+      <div class="metric"><div class="lbl">Machine</div><div class="val">${d.machine_id}</div></div>
+      <div class="metric"><div class="lbl">Operator</div><div class="val">${d.operator_id ?? '—'}</div></div>
+      <div class="metric"><div class="lbl">Seatbelt</div><div class="val">${d.seatbelt_status ?? '—'}</div></div>
+      <div class="metric"><div class="lbl">Compliant</div><div class="val"><span class="badge ${d.compliant ? 'ok' : 'Critical'}">${d.compliant ? 'YES' : 'NO'}</span></div></div>
+    </div><div class="empty">Last reading: ${fmtDate(d.timestamp)}</div>`;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function loadProximity() {
+  const m = $('safety_machine').value.trim();
+  const el = $('safety_single_result');
+  el.innerHTML = 'Loading…';
+  try {
+    const d = await api(`/safety/proximity/${m}`);
+    el.innerHTML = `<div class="metric-grid">
+      <div class="metric"><div class="lbl">Machine</div><div class="val">${d.machine_id}</div></div>
+      <div class="metric"><div class="lbl">Operator</div><div class="val">${d.operator_id ?? '—'}</div></div>
+      <div class="metric"><div class="lbl">Alert</div><div class="val">${d.proximity_alert}</div></div>
+      <div class="metric"><div class="lbl">Speed</div><div class="val">${d.speed_kmph ?? '—'} km/h</div></div>
+      <div class="metric"><div class="lbl">Risk</div><div class="val"><span class="badge ${d.risk_level}">${d.risk_level}</span></div></div>
+    </div><div class="empty">Last reading: ${fmtDate(d.timestamp)}</div>`;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function loadAllProximity() {
+  const el = $('safety_all_alerts');
+  el.innerHTML = 'Loading…';
+  try {
+    const alerts = await api('/safety/proximity');
+    if (!alerts.length) { el.innerHTML = '<div class="empty">No active proximity alerts right now.</div>'; return; }
+    el.innerHTML = `<table><thead><tr><th>Machine</th><th>Operator</th><th>Speed</th><th>Risk</th><th>Time</th></tr></thead><tbody>` +
+      alerts.map(a => `<tr><td>${a.machine_id}</td><td>${a.operator_id ?? '—'}</td><td>${a.speed_kmph ?? '—'}</td>
+        <td><span class="badge ${a.risk_level}">${a.risk_level}</span></td><td>${fmtDate(a.timestamp)}</td></tr>`).join('') +
+      `</tbody></table>`;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function logIncident() {
+  const body = {
+    operator_id: $('inc_operator').value.trim(),
+    machine_id: $('inc_machine').value.trim(),
+    incident_type: $('inc_type').value,
+    severity: $('inc_severity').value,
+    description: $('inc_desc').value.trim(),
+  };
+  try {
+    await api('/safety/incidents', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    loadIncidents();
+  } catch (e) { alert('Error logging incident: ' + e.message); }
+}
+
+async function loadIncidents() {
+  const el = $('incident_list');
+  el.innerHTML = 'Loading…';
+  try {
+    const list = await api('/safety/incidents');
+    if (!list.length) { el.innerHTML = '<div class="empty">No incidents logged yet.</div>'; return; }
+    el.innerHTML = list.map(i => `<div class="card">
+      <div class="title">${i.incident_id} — ${i.incident_type} <span class="badge ${i.severity}">${i.severity}</span></div>
+      <div class="meta">${i.operator_id} · ${i.machine_id} · ${fmtDate(i.timestamp)}</div>
+      <div>${i.description ?? ''}</div>
+    </div>`).join('');
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+// ---------------- Training ----------------
+async function loadModules() {
+  const el = $('training_modules');
+  el.innerHTML = 'Loading…';
+  try {
+    const mods = await api('/training/modules');
+    el.innerHTML = mods.map(m => `<div class="card">
+      <div class="title">${m.title} <span class="badge ok">${m.format}</span></div>
+      <div class="meta">${m.module_id} · ${m.duration_min} min · ${m.skill_level}</div>
+      <div>${m.description}</div>
+    </div>`).join('');
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function bookSession() {
+  const body = {
+    operator_id: $('book_operator').value.trim(),
+    module_id: $('book_module').value.trim(),
+    preferred_datetime: $('book_datetime').value || new Date().toISOString(),
+  };
+  const el = $('booking_result');
+  try {
+    const b = await api('/training/book', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    el.innerHTML = `<div class="card"><div class="title">Booked ${b.booking_id} <span class="badge ok">${b.status}</span></div>
+      <div class="meta">${b.operator_id} · ${b.module_id} · ${fmtDate(b.preferred_datetime)}</div></div>`;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+// ---------------- Behavior ----------------
+async function loadBehavior() {
+  const op = $('beh_operator').value.trim();
+  const days = $('beh_days').value || 7;
+  const el = $('behavior_result');
+  el.innerHTML = 'Loading…';
+  try {
+    const r = await api(`/behavior/${op}/anomalies?days=${days}`);
+    let html = `<div class="metric-grid">
+      <div class="metric"><div class="lbl">Days analyzed</div><div class="val">${r.days_analyzed}</div></div>
+      <div class="metric"><div class="lbl">Avg idle %</div><div class="val">${r.avg_idle_pct}%</div></div>
+      <div class="metric"><div class="lbl">Seatbelt compliance</div><div class="val">${r.avg_seatbelt_compliance_pct}%</div></div>
+      <div class="metric"><div class="lbl">Unsafe events</div><div class="val">${r.total_unsafe_events}</div></div>
+      <div class="metric"><div class="lbl">Proximity alerts</div><div class="val">${r.total_proximity_alerts}</div></div>
+    </div>`;
+    if (!r.anomalies.length) {
+      html += '<div class="empty">No anomalies detected — operating within normal thresholds.</div>';
+    } else {
+      html += r.anomalies.map(a => `<div class="anomaly ${a.severity}">
+        <strong>${a.flag}</strong> <span class="badge ${a.severity}">${a.severity}</span>
+        <div>${a.detail}</div></div>`).join('');
+    }
+    el.innerHTML = html;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+// ---------------- Estimation ----------------
+async function estimateTime() {
+  const body = {
+    task_type: $('est_task_type').value,
+    environmental_condition: $('est_env').value,
+    terrain_type: $('est_terrain').value,
+  };
+  const el = $('estimation_result');
+  el.innerHTML = 'Loading…';
+  try {
+    const r = await api('/estimation/task-time', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    el.innerHTML = `<div class="metric-grid">
+      <div class="metric"><div class="lbl">Predicted duration</div><div class="val">${r.predicted_duration_min} min</div></div>
+      <div class="metric"><div class="lbl">Confidence</div><div class="val">${r.confidence}</div></div>
+      <div class="metric"><div class="lbl">Sample size</div><div class="val">${r.sample_size}</div></div>
+    </div><div class="empty">${r.basis}</div>`;
+  } catch (e) { el.innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+// auto-connect on load
+checkHealth();
+</script>
+</body>
+</html>

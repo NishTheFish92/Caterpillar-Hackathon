@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pandas
+numpy
+pydantic
+
+setuptools
+packaging
+jmespath

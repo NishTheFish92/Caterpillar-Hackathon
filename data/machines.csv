@@ -1,0 +1,11 @@
+machine_id,machine_type,model,year,fuel_type
+MC-001,Wheel Loader,CAT-420,2018,Hybrid
+MC-002,Bulldozer,CAT-420,2021,Diesel
+MC-003,Backhoe,CAT-950,2024,Diesel
+MC-004,Excavator,CAT-320,2017,Hybrid
+MC-005,Wheel Loader,CAT-950,2020,Diesel
+MC-006,Bulldozer,CAT-336,2018,Diesel
+MC-007,Backhoe,CAT-320,2016,Diesel
+MC-008,Excavator,CAT-320,2020,Diesel
+MC-009,Wheel Loader,CAT-420,2019,Diesel
+MC-010,Bulldozer,CAT-950,2023,Diesel
